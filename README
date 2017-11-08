@@ -1,6 +1,11 @@
 Introduction
 
-This is achieved using cron jobs under user 'f5backup', and creates a log tag 'f5backup' in /var/log. Currently we backup f5 every day at 8:05 AM.
+A Script to back up the F5 load balancer configs.
+Run as a cronjob to back up the configs daily.
+
+This is achieved using cron jobs under user 'f5backup', 
+and creates a log tag 'f5backup' in /var/log. 
+Currently we backup f5 every day at 8:05 AM.
 
 
 FUNCTIONS
