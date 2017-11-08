@@ -1,0 +1,29 @@
+Introduction
+
+This is achieved using cron jobs under user 'f5backup', and creates a log tag 'f5backup' in /var/log. Currently we backup f5 every day at 8:05 AM.
+
+
+FUNCTIONS
+    backup()
+        Dowload ucs backup files on F5 to local.
+
+    parse_config(conf_file)
+        # helper function
+
+    save_ucs()
+        Create ucs backup files on F5.
+
+DATA
+    __author__ = 'WGeng'
+    __version__ = '0.0.5'
+    conf_file = './f5backup.conf'
+    config = {'__builtins__': {'ArithmeticError': <type 'exceptions.Arithm...
+    env = {'shell': '/bin/bash -l -c', 'effective_roles': ...ble_known_hos...
+    ipv6_regex = <_sre.SRE_Pattern object>
+    with_statement = _Feature((2, 5, 0, 'alpha', 1), (2, 6, 0, 'alpha', 0)...
+
+VERSION
+    0.0.5
+
+AUTHOR
+    WGeng

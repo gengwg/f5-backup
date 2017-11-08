@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+#
+# Author        : WGeng <gengwg@github.com>
+
+__requires__ = 'Fabric==1.6.2'
+import sys
+import os
+
+def main():
+    cmd = 'fab save_ucs && fab backup && fab push_gitlab'
+    os.system(cmd)
+
+if __name__ == '__main__':
+    sys.exit(
+	      main()
+    )
+
