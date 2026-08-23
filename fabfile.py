@@ -17,6 +17,8 @@ import logging
 from logging import log
 from datetime import date
 import requests
+import os
+import sys
 
 import json
 
@@ -34,11 +36,12 @@ except IOError as e:
     log(logging.ERROR, "Couldn't open config directory.")
     sys.exit(1)
 
+log_dir = os.path.dirname(config["log_file"])
 try:
-    if not os.path.exists("./logs/"):
-        os.mkdir("logs")
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 except OSError, e:
-    log(logging.ERROR, "Couldn't create logs directory.")
+    log(logging.ERROR, "Couldn't create logs directory: %s" % e)
 logging.basicConfig(level=logging.INFO, filename=config["log_file"])
 
 env.user = config['f5_user']
@@ -57,8 +60,9 @@ def save_ucs():
         r_prod = requests.post(config['f5_url_prod'], verify=config['ssl_certificate'], auth=(config['api_user_prod'], config['api_passwd_prod']), headers=config['headers'], data=json.dumps(config['payload']))
         r_dev = requests.post(config['f5_url_dev'], verify=config['ssl_certificate'], auth=(config['api_user_dev'], config['api_passwd_dev']), headers=config['headers'], data=json.dumps(config['payload']))
         r_bench = requests.post(config['f5_url_bench'], verify=config['ssl_certificate'], auth=(config['api_user_bench'], config['api_passwd_bench']), headers=config['headers'], data=json.dumps(config['payload']))
+        for r in (r_prod, r_dev, r_bench):
+            r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        #print e
         log(logging.ERROR, e)
         sys.exit(1)
 
@@ -81,20 +85,18 @@ def backup():
 
     # Construct different back up dir for each F5
     if env.host == config['f5_prod']:
-        #print '==> Hi, Im prod!!'
         mybackup_dir = config['backup_dir'] + '/prod/f5-backup-' + date.today().strftime("%Y%m%d")
-    if env.host == config['f5_dev']:
+    elif env.host == config['f5_dev']:
         env.user = config['api_user_dev']
         env.password = config['api_passwd_dev']
         mybackup_dir = config['backup_dir'] + '/dev/f5-backup-' + date.today().strftime("%Y%m%d")
-    if env.host == config['f5_bench']:
+    elif env.host == config['f5_bench']:
         env.user = config['api_user_bench']
         env.password = config['api_passwd_bench']
         mybackup_dir = config['backup_dir'] + '/bench/f5-backup-' + date.today().strftime("%Y%m%d")
     else:
-        pass
-        #log(logging.ERROR, "Something wrong with your F5 host address. Please check!!")
-        #sys.exit(1)
+        log(logging.ERROR, "Unknown F5 host: %s" % env.host)
+        sys.exit(1)
 
     # make sure the directory is there!
     try:

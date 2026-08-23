@@ -46,3 +46,7 @@ Puppetfile
 # except this module's fixtures directory
 spec/fixtures/modules/*
 !spec/fixtures/modules/mz_cron
+
+# secrets / local config
+f5backup.conf
+key_files/f5backup
