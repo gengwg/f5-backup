@@ -1,34 +1,30 @@
-Introduction
+# f5-backup
 
-A Script to back up the F5 load balancer configs.
-Run as a cronjob to back up the configs daily.
+Back up F5 BIG-IP configs (UCS) and commit them to git. Run as a cronjob.
 
-This is achieved using cron jobs under user 'f5backup', 
-and creates a log tag 'f5backup' in /var/log. 
-Currently we backup f5 every day at 8:05 AM.
+## Setup
 
+```bash
+uv sync
+```
 
-FUNCTIONS
-    backup()
-        Dowload ucs backup files on F5 to local.
+Place the SSH private key at `key_files/f5backup` (git-ignored). Edit
+`f5backup.conf` for hosts and `backup_dir`; passwords come from
+`API_PASSWD_PROD` / `API_PASSWD_DEV` / `API_PASSWD_BENCH` or the conf defaults.
 
-    parse_config(conf_file)
-        # helper function
+## Usage
 
-    save_ucs()
-        Create ucs backup files on F5.
+```bash
+uv run f5backup.py            # save + download + push
+uv run f5backup.py save       # only create the UCS on the F5s
+uv run f5backup.py download   # only download
+uv run f5backup.py push       # only git commit + push
+```
 
-DATA
-    __author__ = 'WGeng'
-    __version__ = '0.0.5'
-    conf_file = './f5backup.conf'
-    config = {'__builtins__': {'ArithmeticError': <type 'exceptions.Arithm...
-    env = {'shell': '/bin/bash -l -c', 'effective_roles': ...ble_known_hos...
-    ipv6_regex = <_sre.SRE_Pattern object>
-    with_statement = _Feature((2, 5, 0, 'alpha', 1), (2, 6, 0, 'alpha', 0)...
+`./f5backup` is a cron wrapper for the default (all) command.
 
-VERSION
-    0.0.5
+## Test
 
-AUTHOR
-    WGeng
+```bash
+uv run pytest
+```
